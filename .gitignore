@@ -27,3 +27,9 @@
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
+
+config/.spotify_key.rb
+client/src/keys/spotify_keys.js
+
+# Ignore application configuration
+/config/application.yml
