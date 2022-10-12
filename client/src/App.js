@@ -7,80 +7,100 @@ function App() {
   const AUTH_ENDPOINT =
     "https://accounts.spotify.com/authorize?scope=user-library-read";
   const RESPONSE_TYPE = "token";
-  const [token, setToken] = useState("");
-  const [user, setUser] = useState("");
+  const [token, setToken] = useState(false);
   const [userLibrary, setUserLibrary] = useState([]);
-  // const [searchKey, setSearchKey] = useState("");
+  const [albumLengths, setAlbumLengths] = useState([]);
+
+  //userLibrary[x].album.uri
 
   useEffect(() => {
     const hash = window.location.hash;
-    let token = window.localStorage.getItem("token");
+    let tempToken = window.localStorage.getItem("token");
 
-    if (!token && hash) {
-      token = hash
+    if (!tempToken && hash) {
+      tempToken = hash
         .substring(1)
         .split("&")
         .find((elem) => elem.startsWith("access_token"))
         .split("=")[1];
       window.location.hash = "";
-      window.localStorage.setItem("token", token);
+      window.localStorage.setItem("token", tempToken);
     }
-    console.log(token);
-    setToken(token);
+    console.log(tempToken);
+    setToken(tempToken);
   }, []);
 
-  //   let urlParams = new URLSearchParams(window.location.hash.replace("#","?"));
+  // let urlParams = new URLSearchParams(window.location.hash.replace("#","?"));
   // let token = urlParams.get('access_token');
 
-  async function getUser() {
-    const { data } = await axios.get("https://api.spotify.com/v1/me/albums", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
-    setUserLibrary(data);
-    console.log(data);
-  }
+  useEffect(() => {
+    async function getUserAlbums() {
+        let offset = 0;
+        let go = true;
+        let temp = [];
+        while (go) {
+          let { data } = await axios.get(
+            `https://api.spotify.com/v1/me/albums?offset=${offset}&limit=50`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          temp = temp.concat(data.items);
+          // console.log(data);
+          offset += 50;
+          if (!data.next) go = false;
+        }
+        console.log(temp);
+        setUserLibrary(temp);
+      }
+    if (token) getUserAlbums();
+  }, [token]);
+
+  useEffect(() => {
+    function getAlbumLengths() {
+      let temp = [];
+      for (const albumObj of userLibrary) {
+        let length = 0;
+        for (const track of albumObj.album.tracks.items) {
+          length += Math.round(track.duration_ms / 1000);
+        }
+        temp.push(Math.round(length / 60));
+      }
+      console.log(temp);
+      setAlbumLengths(temp);
+    }
+    if (userLibrary.length > 0) getAlbumLengths()
+  }, [userLibrary]);
 
   function handleLogOut() {
-    setToken("");
     window.localStorage.removeItem("token");
+    setToken(null);
   }
 
-  async function getUserAlbums() {
-    let offset = 0;
-    let go = true;
-    while (go) {
-      let { data } = await axios.get(
-        `https://api.spotify.com/v1/me/albums?offset=${offset}&limit=50`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      setUserLibrary([...userLibrary, data.items])
-      console.log(data)
-      offset += 50;
-      if (!data.next) go = false;
+
+
+
+
+
+
+
+
+  function combinationSum(candidates, target) {
+    const result = [];
+    function permute(arr = [], sum = 0, idx = -1) {
+      if (sum > target) return;
+      if (Math.abs(sum - target) <= 3) result.push(arr);
+      for (let i = idx + 1; i < candidates.length; i++) {
+        permute([...arr, i], sum + candidates[i], i);
+      }
     }
+    permute();
+    console.log(result);
+    return result;
   }
-
-  // async function searchArtists(e) {
-  //   e.preventDefault();
-  //   const { data } = await axios.get("https://api.spotify.com/v1/search", {
-  //     headers: {
-  //       Authorization: `Bearer ${token}`
-  //     },
-  //     params: {
-  //       q: searchKey,
-  //       type: "artist",
-  //     },
-  //   });
-  //   console.log(data);
-  // }
 
   return (
     <div className="App">
@@ -92,22 +112,14 @@ function App() {
           <button onClick={handleLogOut}>Sign In To Spotify</button>
         </a>
       ) : (
-        <button>Log Out</button>
-      )}
-
-      {/* {token ? (
-        <form onSubmit={(e) => searchArtists(e)}>
-          <input type="text" onChange={(e) => setSearchKey(e.target.value)} />
-          <button type="submit">Search</button>
-        </form>
-      ) : (
-        <p>Please Log In</p>
-      )} */}
-
-      {token ? (
-        <button onClick={getUserAlbums}>Get User Albums</button>
-      ) : (
-        <p>Please Log In</p>
+        <div>
+          {/* <button onClick={getAlbumLengths}>Get Album Lengths</button> */}
+          <button onClick={() => combinationSum(albumLengths, 90)}>
+            Get Possible Combos
+          </button>
+          <br />
+          <button>Log Out</button>
+        </div>
       )}
     </div>
   );
