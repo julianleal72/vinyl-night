@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import TimeSelector from "./components/TimeSelector";
+import Player from "./components/Player";
+import ChooseYourFighter from "./components/ChooseYourFighter";
 
 function App() {
   const CLIENT_ID = "8db5dd11ef6847a7bc0184d40546bdb3";
@@ -10,6 +13,7 @@ function App() {
   const [token, setToken] = useState(false);
   const [userLibrary, setUserLibrary] = useState([]);
   const [albumLengths, setAlbumLengths] = useState([]);
+  const [queue, setQueue] = useState(false);
 
   //userLibrary[x].album.uri
 
@@ -35,27 +39,27 @@ function App() {
 
   useEffect(() => {
     async function getUserAlbums() {
-        let offset = 0;
-        let go = true;
-        let temp = [];
-        while (go) {
-          let { data } = await axios.get(
-            `https://api.spotify.com/v1/me/albums?offset=${offset}&limit=50`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-              },
-            }
-          );
-          temp = temp.concat(data.items);
-          // console.log(data);
-          offset += 50;
-          if (!data.next) go = false;
-        }
-        console.log(temp);
-        setUserLibrary(temp);
+      let offset = 0;
+      let go = true;
+      let temp = [];
+      while (go) {
+        let { data } = await axios.get(
+          `https://api.spotify.com/v1/me/albums?offset=${offset}&limit=50`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        temp = temp.concat(data.items);
+        // console.log(data);
+        offset += 50;
+        if (!data.next) go = false;
       }
+      console.log(temp);
+      setUserLibrary(temp);
+    }
     if (token) getUserAlbums();
   }, [token]);
 
@@ -72,7 +76,7 @@ function App() {
       console.log(temp);
       setAlbumLengths(temp);
     }
-    if (userLibrary.length > 0) getAlbumLengths()
+    if (userLibrary.length > 0) getAlbumLengths();
   }, [userLibrary]);
 
   function handleLogOut() {
@@ -80,46 +84,31 @@ function App() {
     setToken(null);
   }
 
-
-
-
-
-
-
-
-
-  function combinationSum(candidates, target) {
-    const result = [];
-    function permute(arr = [], sum = 0, idx = -1) {
-      if (sum > target) return;
-      if (Math.abs(sum - target) <= 3) result.push(arr);
-      for (let i = idx + 1; i < candidates.length; i++) {
-        permute([...arr, i], sum + candidates[i], i);
-      }
-    }
-    permute();
-    console.log(result);
-    return result;
-  }
-
   return (
     <div className="App">
       <h1>TurNTablE - Vinyl Night</h1>
+      {/*PUT RECORD PLAYER GIF HERE*/}
+
+      {token ? (
+        queue ? (
+          queue.length > 1 ? (
+            <ChooseYourFighter queue={queue} setQueue={setQueue}/>
+          ) : (
+            <Player queue={queue}/>
+          )
+        ) : (
+          <TimeSelector albumLengths={albumLengths} setQueue={setQueue} userLibrary={userLibrary}/>
+        )
+      ) : null}
+
       {!token ? (
         <a
           href={`${AUTH_ENDPOINT}&client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}
         >
-          <button onClick={handleLogOut}>Sign In To Spotify</button>
+          <button onClick={handleLogOut}>Enter</button>
         </a>
       ) : (
-        <div>
-          {/* <button onClick={getAlbumLengths}>Get Album Lengths</button> */}
-          <button onClick={() => combinationSum(albumLengths, 90)}>
-            Get Possible Combos
-          </button>
-          <br />
-          <button>Log Out</button>
-        </div>
+        <button>Log Out</button>
       )}
     </div>
   );
