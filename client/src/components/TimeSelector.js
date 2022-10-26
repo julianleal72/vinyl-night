@@ -1,24 +1,27 @@
 import { useState } from "react";
 import Select from "react-select";
+import "../App.css"
+import Button from "react-bootstrap/Button";
 
-function TimeSelector({ albumLengths, setQueue, userLibrary }) {
+function TimeSelector({ albumLengths, setQueue, userLibrary, setLoading }) {
   const [time, setTime] = useState(60);
   const options = [
-    { value: 30, label: "30m" },
-    { value: 45, label: "45m" },
-    { value: 60, label: "1h" },
-    { value: 75, label: "1h 15m" },
-    { value: 90, label: "1h 30m" },
-    { value: 105, label: "1h 45m" },
-    { value: 120, label: "2hrs" },
-    { value: 135, label: "2hrs 15m" },
-    { value: 150, label: "2hrs 30m" },
-    { value: 165, label: "2hrs 45m" },
-    { value: 180, label: "3hrs" },
+    { value: 30, label: "30 m" },
+    { value: 45, label: "45 m" },
+    { value: 60, label: "1 h" },
+    { value: 75, label: "1 h 15 m" },
+    { value: 90, label: "1 h 30 m" },
+    { value: 105, label: "1 h 45 m" },
+    { value: 120, label: "2 hrs" },
+    { value: 135, label: "2 hrs 15 m" },
+    { value: 150, label: "2 hrs 30 m" },
+    { value: 165, label: "2 hrs 45 m" },
+    { value: 180, label: "3 hrs" },
   ];
 
   function letsStart(e) {
     e.preventDefault();
+    setLoading(true)
     let theGoods = selectThree(combinationSum(albumLengths, time));
     let tempA = [];
     for (const elem of theGoods) {
@@ -29,6 +32,7 @@ function TimeSelector({ albumLengths, setQueue, userLibrary }) {
       tempA.push(tempB);
     }
     setQueue(tempA);
+    setLoading(false)
   }
 
   function selectThree(possibilities) {
@@ -57,12 +61,12 @@ function TimeSelector({ albumLengths, setQueue, userLibrary }) {
   return (
     <div>
       <form onSubmit={(e) => letsStart(e)}>
-        <Select
+        <Select className="timeSelect"
           options={options}
           value={options.find((obj) => obj.value === time)}
           onChange={(e) => setTime(e.value)}
         />
-        <button type="submit">Go</button>
+        <Button type="submit">Go</Button>
       </form>
     </div>
   );

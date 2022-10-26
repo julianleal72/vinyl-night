@@ -1,3 +1,5 @@
+import "../App.css"
+
 function QueueCard({ cardInfo, setQueue }) {
     function handleClick(e){
         e.preventDefault()
@@ -8,7 +10,7 @@ function QueueCard({ cardInfo, setQueue }) {
     }
 
   return (
-    <div>
+    <div className="fighter">
       <button type="button" onClick={e => handleClick(e)}>Let's Get It Poppin'</button>
       {cardInfo.map((elem) => (
         <div>{/*turn this into a component as well, that'll solve the key prop issue*/}

@@ -3,8 +3,10 @@ import axios from "axios";
 import TimeSelector from "./components/TimeSelector";
 import Player from "./components/Player";
 import ChooseYourFighter from "./components/ChooseYourFighter";
-import './App.css'
-import Button from 'react-bootstrap/Button';
+import "./App.css";
+import Button from "react-bootstrap/Button";
+import Spinner from "react-bootstrap/Spinner";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
   const CLIENT_ID = "8db5dd11ef6847a7bc0184d40546bdb3";
@@ -16,6 +18,17 @@ function App() {
   const [userLibrary, setUserLibrary] = useState([]);
   const [albumLengths, setAlbumLengths] = useState([]);
   const [queue, setQueue] = useState(false);
+  const imageFlipArr = [
+    "./img/Vinyl/1.jpg",
+    "./img/Vinyl/2.jpg",
+    "./img/Vinyl/3.jpg",
+    "./img/Vinyl/4.jpg",
+    "./img/Vinyl/5.jpg",
+    "./img/Vinyl/6.jpg",
+    "./img/Vinyl/8.jpg"
+  ];
+  const [currentImg, setCurrentImg] = useState(imageFlipArr[0]);
+  const [loading, setLoading] = useState(false);
 
   //userLibrary[x].album.uri
 
@@ -61,8 +74,12 @@ function App() {
       }
       console.log(temp);
       setUserLibrary(temp);
+      setLoading(false);
     }
-    if (token) getUserAlbums();
+    if (token) {
+      setLoading(true);
+      getUserAlbums();
+    }
   }, [token]);
 
   useEffect(() => {
@@ -86,32 +103,66 @@ function App() {
     setToken(null);
   }
 
+  useEffect(() => {
+    setTimeout(() => {
+      let newIndex = 0;
+      if (
+        imageFlipArr.findIndex((element) => element === `${currentImg}`) <
+        imageFlipArr.length - 1
+      )
+        newIndex =
+          imageFlipArr.findIndex((element) => element === `${currentImg}`) + 1;
+      setCurrentImg(imageFlipArr[newIndex]);
+    }, 400);
+  }, [currentImg]);
+
   return (
     <div className="App">
-      <img src={require("./img/Vinyl.jpg")} alt="logo"/>
+      <img src={require(`${currentImg}`)} alt="logo" />
       {/*PUT RECORD PLAYER GIF HERE*/}
-      <div className="Goods">
-      {token ? (
-        queue ? (
-          queue.length > 1 ? (
-            <ChooseYourFighter queue={queue} setQueue={setQueue}/>
-          ) : (
-            <Player queue={queue}/>
-          )
-        ) : (
-          <TimeSelector albumLengths={albumLengths} setQueue={setQueue} userLibrary={userLibrary}/>
-        )
-      ) : null}
-
-      {!token ? (
-        <Button onClick={handleLogOut} variant="success"><a
-          href={`${AUTH_ENDPOINT}&client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}
-        >
-          <img className="loginButton" alt="SpotifyLogo" src={require("./img/spotify-icons-logos/logos/01_RGB/02_PNG/Spotify_Logo_RGB_Green.png")}/>
-        </a></Button>
+      {loading ? (
+        <Spinner animation="border" variant="primary" className="loader"/>
       ) : (
-        <button>Log Out</button>
-      )}</div>
+        <div className="Goods">
+          {token ? (
+            queue ? (
+              queue.length > 1 ? (
+                <ChooseYourFighter queue={queue} setQueue={setQueue} />
+              ) : (
+                <Player queue={queue} />
+              )
+            ) : (
+              <TimeSelector
+                albumLengths={albumLengths}
+                setQueue={setQueue}
+                userLibrary={userLibrary}
+                setLoading={setLoading}
+              />
+            )
+          ) : null}
+
+          {!token ? (
+            <div>Login with <br/>
+            <Button variant="success">
+              <a
+                href={`${AUTH_ENDPOINT}&client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}
+              >
+                <img
+                  className="loginButton"
+                  alt="SpotifyLogo"
+                  src={require("./img/spotify-icons-logos/logos/01_RGB/02_PNG/Spotify_Logo_RGB_White.png")}
+                />
+              </a>
+            </Button></div>
+          ) : null}
+        </div>)}
+         {token ? <div className="logoutbutton">
+          <Button
+            variant="outline-warning"
+            onClick={handleLogOut}
+          >
+            Log Out
+          </Button></div> : null}
     </div>
   );
 }
