@@ -4,6 +4,7 @@ import TimeSelector from "./components/TimeSelector";
 import Player from "./components/Player";
 import ChooseYourFighter from "./components/ChooseYourFighter";
 import './App.css'
+import Button from 'react-bootstrap/Button';
 
 function App() {
   const CLIENT_ID = "8db5dd11ef6847a7bc0184d40546bdb3";
@@ -87,7 +88,7 @@ function App() {
 
   return (
     <div className="App">
-      <img src="./img/Vinyl.jpg" alt="logo"/>
+      <img src={require("./img/Vinyl.jpg")} alt="logo"/>
       {/*PUT RECORD PLAYER GIF HERE*/}
       <div className="Goods">
       {token ? (
@@ -103,11 +104,11 @@ function App() {
       ) : null}
 
       {!token ? (
-        <a
+        <Button onClick={handleLogOut} variant="success"><a
           href={`${AUTH_ENDPOINT}&client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}
         >
-          <button onClick={handleLogOut}>Enter</button>
-        </a>
+          <img className="loginButton" alt="SpotifyLogo" src={require("./img/spotify-icons-logos/logos/01_RGB/02_PNG/Spotify_Logo_RGB_Green.png")}/>
+        </a></Button>
       ) : (
         <button>Log Out</button>
       )}</div>
