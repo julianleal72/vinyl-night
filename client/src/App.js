@@ -3,6 +3,7 @@ import axios from "axios";
 import TimeSelector from "./components/TimeSelector";
 import Player from "./components/Player";
 import ChooseYourFighter from "./components/ChooseYourFighter";
+import './App.css'
 
 function App() {
   const CLIENT_ID = "8db5dd11ef6847a7bc0184d40546bdb3";
@@ -88,7 +89,7 @@ function App() {
     <div className="App">
       <h1>TurNTablE - Vinyl Night</h1>
       {/*PUT RECORD PLAYER GIF HERE*/}
-
+      <div className="Goods">
       {token ? (
         queue ? (
           queue.length > 1 ? (
@@ -109,7 +110,7 @@ function App() {
         </a>
       ) : (
         <button>Log Out</button>
-      )}
+      )}</div>
     </div>
   );
 }
