@@ -87,7 +87,7 @@ function App() {
 
   return (
     <div className="App">
-      <h1>TurNTablE - Vinyl Night</h1>
+      <img src="./img/Vinyl.jpg" alt="logo"/>
       {/*PUT RECORD PLAYER GIF HERE*/}
       <div className="Goods">
       {token ? (
