@@ -1,10 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Select from "react-select";
-import "../App.css"
+import "../App.css";
 import Button from "react-bootstrap/Button";
+import Spinner from "react-bootstrap/Spinner";
 
-function TimeSelector({ albumLengths, setQueue, userLibrary, setLoading }) {
+function TimeSelector({
+  albumLengths,
+  setQueue,
+  userLibrary,
+  neonMode
+}) {
   const [time, setTime] = useState(60);
+  const [loading, setLoading] = useState(false);
+
   const options = [
     { value: 30, label: "30 m" },
     { value: 45, label: "45 m" },
@@ -19,9 +27,18 @@ function TimeSelector({ albumLengths, setQueue, userLibrary, setLoading }) {
     { value: 180, label: "3 hrs" },
   ];
 
-  function letsStart(e) {
-    e.preventDefault();
-    setLoading(true)
+  useEffect(() => {
+    if (loading) {
+      setTimeout(() => letsStart(), 500);
+    }
+  }, [loading]);
+
+  function letsStart() {
+    setQueue(middleMan());
+    setLoading(false);
+  }
+
+  function middleMan() {
     let theGoods = selectThree(combinationSum(albumLengths, time));
     let tempA = [];
     for (const elem of theGoods) {
@@ -31,8 +48,7 @@ function TimeSelector({ albumLengths, setQueue, userLibrary, setLoading }) {
       }
       tempA.push(tempB);
     }
-    setQueue(tempA);
-    setLoading(false)
+    return tempA;
   }
 
   function selectThree(possibilities) {
@@ -60,14 +76,31 @@ function TimeSelector({ albumLengths, setQueue, userLibrary, setLoading }) {
 
   return (
     <div>
-      <form onSubmit={(e) => letsStart(e)}>
-        <Select className="timeSelect"
-          options={options}
-          value={options.find((obj) => obj.value === time)}
-          onChange={(e) => setTime(e.value)}
-        />
-        <Button type="submit">Go</Button>
-      </form>
+      {loading ? (
+        <Spinner animation="border" variant="primary" className="loader" />
+      ) : (
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            setLoading(true)
+          }}
+        >
+          <Select
+            className="timeSelect"
+            options={options}
+            value={options.find((obj) => obj.value === time)}
+            onChange={(e) => setTime(e.value)}
+            isSearchable={false}
+          />
+          <br />
+          <Button
+            type="submit"
+            variant={neonMode ? "outline-success" : "outline-warning"}
+          >
+            Go
+          </Button>
+        </form>
+      )}
     </div>
   );
 }

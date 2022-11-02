@@ -8,7 +8,7 @@
 .Goods {
   height: 30vh;
   position:relative;
-  top:30vh;
+  top:10vh;
   background:black;
 }
 
@@ -21,6 +21,11 @@
   position: absolute;
   bottom: 5%;
   left: 90%
+}
+.changeMode {
+  position: absolute;
+  bottom: 5%;
+  right: 90%
 }
 
 .timeSelect {
@@ -36,10 +41,25 @@
 }
 
 .chooseYourFighter {
-  display:inline-flex;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  grid-auto-rows: minmax(100px, auto);
 }
 
 .fighter {
   margin-left: 50px;
   margin-right: 50px;
+}
+
+.fightCard {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  grid-auto-rows: minmax(100px, auto);
+  color: white
+}
+
+.log {
+  color: #1db954
 }
