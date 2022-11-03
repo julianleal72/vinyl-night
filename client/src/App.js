@@ -13,7 +13,7 @@ function App() {
   const CLIENT_ID = "8db5dd11ef6847a7bc0184d40546bdb3";
   const REDIRECT_URI = "http://localhost:4000";
   const AUTH_ENDPOINT =
-    "https://accounts.spotify.com/authorize?scope=user-library-read+playlist-modify-public+user-read-private+user-modify-playback-state";
+    "https://accounts.spotify.com/authorize?scope=user-library-read+playlist-modify-public+user-read-private+user-modify-playback-state+user-read-playback-state";
   const RESPONSE_TYPE = "token";
   const [token, setToken] = useState(false);
   const [userName, setUserName] = useState(null);

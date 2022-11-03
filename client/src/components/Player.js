@@ -3,27 +3,68 @@ import axios from "axios";
 
 function Player({ play, token }) {
   useEffect(() => {
-    console.log(play)
+    console.log(play);
     setTimeout(() => {
-      console.log("starting")
       begin();
-    }, 5000);
+    }, 3000);
   }, []);
 
   async function begin() {
-    await axios.put(
-      `https://api.spotify.com/v1/me/player/play`,
-      {
-        context_uri: play,
-      },
-      {
+    let dev_id = null;
+    await axios.get("https://api.spotify.com/v1/me/player/devices", {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
-        }
+        },
+      })
+      .then((resp) => {
+        console.log(resp);
+        dev_id = resp.data.devices[1].id;
+        axios.put(
+            "https://api.spotify.com/v1/me/player/",
+            {
+              "play": true,
+              "device_ids": [dev_id],
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+            }
+          )
+          .then((resp) => {
+            console.log(resp);
+            // axios.put(
+            //     "https://api.spotify.com/v1/me/player/shuffle",
+            //     {
+            //       "device_id": [dev_id],
+            //       "state": false,
+            //     },
+            //     {
+            //       headers: {
+            //         Authorization: `Bearer ${token}`,
+            //         "Content-Type": "application/json",
+            //       },
+            //     }
+            //   )
+              // .then((resp) => {
+              //   console.log(resp);
+                axios.put(
+                  "https://api.spotify.com/v1/me/player/play",
+                  {
+                    "context_uri": play,
+                  },
+                  {
+                    headers: {
+                      Authorization: `Bearer ${token}`,
+                      "Content-Type": "application/json",
+                    },
+                  });
+              });
+          });
       }
-    );
-  }
+  //)}
 
   return (
     <div>
