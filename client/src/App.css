@@ -63,3 +63,11 @@
 .log {
   color: #1db954
 }
+
+.utilitybuttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 100px;
+  grid-auto-rows: minmax(10px, 35px);
+  color: white
+}

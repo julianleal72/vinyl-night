@@ -1,7 +1,8 @@
 import "../App.css";
 import axios from "axios";
+import Button from "react-bootstrap/Button";
 
-function QueueCard({ cardInfo, userName, token, setPlay, setLoading }) {
+function QueueCard({ cardInfo, userName, token, setPlay, setLoading, neonMode }) {
 
   function handleClick(e) {
     setLoading(true)
@@ -70,9 +71,9 @@ function QueueCard({ cardInfo, userName, token, setPlay, setLoading }) {
 
   return (
     <div className="fighter">
-      <button type="button" onClick={(e) => handleClick(e)}>
+      <Button type="button" variant={neonMode ? "outline-success" : "outline-warning"} onClick={(e) => handleClick(e)}>
         Let's Get It Poppin'
-      </button>
+      </Button>
       <div className="fightCard">
         {cardInfo.map((elem, index) => (
           <div key={index}>

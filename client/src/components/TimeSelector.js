@@ -40,6 +40,7 @@ function TimeSelector({
 
   function middleMan() {
     let theGoods = selectThree(combinationSum(albumLengths, time));
+    console.log(theGoods)
     let tempA = [];
     for (const elem of theGoods) {
       let tempB = [];
@@ -53,6 +54,7 @@ function TimeSelector({
 
   function selectThree(possibilities) {
     let select3 = [];
+    console.log(possibilities)
     for (let i = 0; i < 3; i++) {
       select3.push(
         possibilities[Math.floor(Math.random() * possibilities.length)]
@@ -63,11 +65,12 @@ function TimeSelector({
 
   function combinationSum(candidates, target) {
     const result = [];
-    function permute(arr = [], sum = 0, idx = -1) {
+    function permute(arr = [], sum = 0, idx = Math.floor(Math.random() * (candidates.length/2))-1) {
       if (sum > target) return;
-      if (Math.abs(sum - target) <= 2) result.push(arr);
-      for (let i = idx + 1; i < candidates.length; i++) {
-        permute([...arr, i], sum + candidates[i], i);
+      if (Math.abs(sum - target) <= 5) result.push(arr);
+      for (let i = idx + 1; i < candidates.length; i+=2) {
+        if (result.length > 1000) return result
+        permute([...arr, i], sum + candidates[i], i + Math.floor(Math.random()*candidates.length));
       }
     }
     permute();

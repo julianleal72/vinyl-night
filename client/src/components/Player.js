@@ -18,8 +18,7 @@ function Player({ play, token }) {
         },
       })
       .then((resp) => {
-        console.log(resp);
-        dev_id = resp.data.devices[1].id;
+        dev_id = resp.data.devices.find(elem => elem.is_active).id;
         axios.put(
             "https://api.spotify.com/v1/me/player/",
             {
@@ -34,12 +33,11 @@ function Player({ play, token }) {
             }
           )
           .then((resp) => {
-            console.log(resp);
             // axios.put(
             //     "https://api.spotify.com/v1/me/player/shuffle",
             //     {
-            //       "device_id": [dev_id],
             //       "state": false,
+            //       "device_id": dev_id,
             //     },
             //     {
             //       headers: {
@@ -48,8 +46,7 @@ function Player({ play, token }) {
             //       },
             //     }
             //   )
-              // .then((resp) => {
-              //   console.log(resp);
+            //   .then((resp) => {
                 axios.put(
                   "https://api.spotify.com/v1/me/player/play",
                   {
@@ -64,7 +61,7 @@ function Player({ play, token }) {
               });
           });
       }
-  //)}
+  // )}
 
   return (
     <div>

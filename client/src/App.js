@@ -191,7 +191,7 @@ function App() {
                 <Player play={play} token={token}/>
               ) : (
                 <ChooseYourFighter queue={queue} setPlay={setPlay} userName={userName}
-                token={token} setLoading={setLoading}/>
+                token={token} setLoading={setLoading} neonMode={neonMode} setQueue={setQueue}/>
               )
             ) : (
               <TimeSelector
